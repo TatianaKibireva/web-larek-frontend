@@ -55,7 +55,7 @@ export interface ProductCard {
   product: IProduct;
   
   // отрисовывает карточку товара на главной странице
-  render(): HTMLElement;
+  render(product: IProduct): HTMLElement;
 
 }
 
@@ -77,28 +77,44 @@ export interface BasketModal{
  
   // DOM-элемент корзины
   element: HTMLElement;
-  // товары в корзине
-  items: IBasketItem[];
 
-  // отрисовывает корзину в модальном окне
-  render(): HTMLElement;
+  // отрисовывает корзину с переданными элементами
+  render(items: IBasketItem[]): HTMLElement;
   // обновляет итоговую сумму
   updateTotal(amount: number): void;
 
 }
 
 // Интерфейс форм выбора оплаты и ввода адреса
-export interface Form {
+export interface PaymentForm {
 
   // DOM-элемент формы выбора оплаты и ввода адреса
   paymentForm: HTMLElement;
-  // DOM-элемент формы ввода контактных данных
-  contactsForm: HTMLElement;
 
   // отрисовывает форму оплаты и ввода адреса
-  renderPaymentForm(): HTMLElement;
-  // отрисовывает форму ввода контактных данных
-  renderContactsForm(): HTMLElement;
-  // проверяет валидность введенных данных
-  validate(): boolean;
+  render(paymentMethods: PaymentMethod[], address: string): HTMLElement
+}
+
+export interface SuccessModal {
+  element: HTMLElement
+  getElement(): HTMLElement
+  render(totalAmount: number): void 
+}
+
+export interface HeaderView {
+element: HTMLElement
+basketButton: HTMLButtonElement
+
+constructor()
+updateBasketCounter(count: number): void
+getElement(): HTMLElement
+}
+
+
+export interface MainPageView {
+element: HTMLElement
+
+ constructor()
+ renderProducts(products: IProduct[]): void
+ getElement(): HTMLElement
 }

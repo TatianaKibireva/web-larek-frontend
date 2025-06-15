@@ -77,7 +77,7 @@ yarn build
   Поля класса:
    - element: HTMLElement - DOM-элемент карточки;
   Метод класса:
-   - render(product: IProduct ): HTMLElement - отрисовывает карточку товара на главной странице.
+   - render(product: IProduct): HTMLElement - отрисовывает карточку товара на главной странице.
 
 3. Класс ProductDetailsModal - класс для отображения детальной информации о товаре в модальном окне.
   Поля класса:
@@ -88,16 +88,15 @@ yarn build
 4. Класс BasketModal - класс для отображения содержимого корзины.
   Поля класса:
     - container: HTMLElement - контейнер для списка товаров;
-    - items: IBasketItem[] - товары в корзине.
   Методы класса:
-   - render(): HTMLElement - отрисовывает корзину с переданными элементами в модальном окне;
+   - render(items: IBasketItem[]): HTMLElement - отрисовывает корзину с переданными элементами;
    - updateTotal(amount: number): void - обновляет итоговую сумму.
 
 5. Класс PaymentForm - класс для управления формой выбора оплаты.
   Поля класса:
   - paymentFormElement: HTMLElement - DOM-элемент формы выбора оплаты.
   Методы класса:
-  - render(): HTMLElement - отрисовывает форму оплаты.
+  - render(paymentMethods: PaymentMethod[], address: string): HTMLElement - отрисовывает форму оплаты.
 
 6. Класс ContactsForm - класс для управления формой ввода контактных данных.
   Поля класса:
@@ -107,10 +106,27 @@ yarn build
 
 7. Класс SuccessModal - 
   Поля класса:
-  - modal: ViewModal; - наследование от общего модального окна;
+  - element: HTMLElement - корневой DOM-элемент;
   Методы класса:
-  - constructor(modal: ViewModal ) - инициализация окна успеха, используя переданный экземпляр ViewModal.
-  - render(): void - отрисовывает контент и открывает окно.
+  - getElement(): HTMLElement - метод для получения корневого DOM-элемента.
+  - render(totalAmount: number): void - отрисовывает контент и открывает окно, totalAmount - сумма списания, которая будет отображена.
+
+8. Класс HeaderView - отвечает за отображение и управление шапкой приложения
+  Поля класса:
+ - element: HTMLElement - корневой DOM-элемент хедера;
+ - basketButton: HTMLButtonElement - кнопка корзины;
+  Методы класса:
+ - constructor() - конструктор создает структуру шапки;
+ - updateBasketCounter(count: number): void - обновляет счетчик товаров в корзине, count - новое количество товаров;
+ - getElement(): HTMLElement - возврат корневого элемента шапки для вставки в DOM.
+
+9. Класс MainPageView - отвечает за отображение главной страницы с товарами.
+  Поля класса:
+ - element: HTMLElement - корневой DOM-элемент главной страницы;
+  Методы класса:
+ - constructor() - конструктор создает структуру главной страницы;
+ - renderProducts(products: IProduct[]): void - отрисовывает список товаров;
+ - getElement(): HTMLElement - возвращает корневой элемент главной страницы.
 
 ## Слой Model
 
@@ -123,8 +139,8 @@ yarn build
  - validateAddress(): boolean - валидация поля ввода адреса доставки;
  - validateEmail(): boolean - валидация поля ввода email;
  - validatePhone(): boolean - валидация поля ввода номера телефона;
- - setOrderPayment(): void - установка данных оплаты/доставки;
- - setOrderContacts(): void - установка контактных данных;
+ - setOrderPayment(payment: PaymentMethod, address: string): void - установка данных оплаты/доставки;
+ - setOrderContacts(email: string, phone: string): void - установка контактных данных;
  - getProducts(): IProduct[] - возвращает список товаров;
  - getProductById(id: string): IProduct | undefined - возвращает товар по ID;
  - addToBasket(product: IProduct): void - добавляет товар в корзину;
