@@ -1,15 +1,20 @@
 // Данные товара
-export interface IProduct {
+export interface ICard {
   id: string;
   title: string;
   category: string;
   image: string;
   price: number | null;
-  description: string;
+  // text?: string;
+  description?: string;
+}
+
+export interface ICatalog {
+  cards: ICard[]
 }
 
 // Товары в корзине
-export interface IBasketItem extends IProduct {
+export interface IBasketItem extends ICard {
   quantity: number;
 }
 
@@ -25,7 +30,7 @@ export interface IOrder {
 export interface IApiClient {
 
   // Получить список товаров
-  getProducts(): Promise<IProduct[]>;
+  getCards(): Promise<ICard[]>;
   // Отправить заказ
   createOrder(order: IOrder): Promise<{ success: boolean }>;
 }
@@ -52,20 +57,20 @@ export interface ProductCard {
   // DOM-элемент карточки
   element: HTMLElement;
   // данные товара (категория, наименование, цена, изображение товара)
-  product: IProduct;
+  card: ICard;
   
   // отрисовывает карточку товара на главной странице
-  render(product: IProduct): HTMLElement;
+  render(card: ICard): HTMLElement;
 
 }
 
 // Интерфейс отображения детальной информации о товаре в модальном окне
-export interface ProductDetailsModal {
+export interface CardDetailsModal {
 
   //DOM-элемент детальной информации
   element: HTMLElement;
   // данные товара (категория, наименование, цена, изображение, подробное описание товара)
-  product: IProduct;
+  card: ICard;
 
   // отрисовывает детальную информацию о карточке в модальном окне
   render(): HTMLElement;
@@ -92,7 +97,7 @@ export interface PaymentForm {
   paymentForm: HTMLElement;
 
   // отрисовывает форму оплаты и ввода адреса
-  render(paymentMethods: PaymentMethod[], address: string): HTMLElement
+  render(paymentMethods: PaymentMethodData[], address: string): HTMLElement
 }
 
 export interface SuccessModal {
@@ -105,7 +110,7 @@ export interface HeaderView {
 element: HTMLElement
 basketButton: HTMLButtonElement
 
-constructor()
+constructor(): HeaderView
 updateBasketCounter(count: number): void
 getElement(): HTMLElement
 }
@@ -114,7 +119,9 @@ getElement(): HTMLElement
 export interface MainPageView {
 element: HTMLElement
 
- constructor()
- renderProducts(products: IProduct[]): void
+ constructor(): MainPageView
+ renderCards(products: ICard[]): void
  getElement(): HTMLElement
 }
+
+

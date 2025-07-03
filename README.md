@@ -57,7 +57,7 @@ yarn build
 
 ## Архитектура проекта (MVP)
 
-Основой системы является класс ProductModel (расположенный в src/components/ProductModel.ts), который инкапсулирует все данные приложения и бизнес-логику работы с ними. Модель содержит данные приложения и методы по работе с ними.
+Основой системы является класс CardModel (расположенный в src/components/CardModel.ts), который инкапсулирует все данные приложения и бизнес-логику работы с ними. Модель содержит данные приложения и методы по работе с ними.
 
 Для уведомления об изменениях используется система событий, реализованная через брокер событий EventEmitter (src/components/base/events.ts). 
 Презентеры - служат для обработки пользовательских действий, они подписываются на события от элементов отображения, вызывают соответствующие методы модели и координируют обновление элементов отображения через EventEmitter.
@@ -73,17 +73,17 @@ yarn build
    - open(): void - открывает модальное окно с установленным контентом методом setContent;
    - close(): void - закрывает модальное окно.
 
-2. Класс ProductCard - класс для отображения карточки товара на главной странице.
+2. Класс CardView - класс для отображения карточки товара на главной странице.
   Поля класса:
    - element: HTMLElement - DOM-элемент карточки;
   Метод класса:
-   - render(product: IProduct): HTMLElement - отрисовывает карточку товара на главной странице.
+   - render(card: ICard): HTMLElement - отрисовывает карточку товара на главной странице.
 
-3. Класс ProductDetailsModal - класс для отображения детальной информации о товаре в модальном окне.
+3. Класс CardDetailsModal - класс для отображения детальной информации о товаре в модальном окне.
   Поля класса:
     - element: HTMLElement - DOM-элемент детальной информации;
   Методы класса:
-   - render(product: IProduct): HTMLElement - отрисовывает детальную информацию о карточке в модальном окне. 
+   - render(card: ICard): HTMLElement - отрисовывает детальную информацию о карточке в модальном окне. 
 
 4. Класс BasketModal - класс для отображения содержимого корзины.
   Поля класса:
@@ -120,19 +120,19 @@ yarn build
  - updateBasketCounter(count: number): void - обновляет счетчик товаров в корзине, count - новое количество товаров;
  - getElement(): HTMLElement - возврат корневого элемента шапки для вставки в DOM.
 
-9. Класс MainPageView - отвечает за отображение главной страницы с товарами.
+9. Класс CatalogView - отвечает за отображение главной страницы с товарами.
   Поля класса:
  - element: HTMLElement - корневой DOM-элемент главной страницы;
   Методы класса:
  - constructor() - конструктор создает структуру главной страницы;
- - renderProducts(products: IProduct[]): void - отрисовывает список товаров;
+ - renderCards(cards: ICard[]): void - отрисовывает список товаров;
  - getElement(): HTMLElement - возвращает корневой элемент главной страницы.
 
 ## Слой Model
 
 Модели в проекте представлены классом `ProductModel`, который содержит в себе данные о товарах и логику работы с ними.
 Поля:
- - products: IProduct[] - массив товаров на главной странице;
+ - products: ICard[] - массив товаров на главной странице;
  - basket: IBasketItem[] - массив товаров в корзине;
  - order: IOrder | null - данные заказа.
 Методы:
@@ -141,10 +141,10 @@ yarn build
  - validatePhone(): boolean - валидация поля ввода номера телефона;
  - setOrderPayment(payment: PaymentMethod, address: string): void - установка данных оплаты/доставки;
  - setOrderContacts(email: string, phone: string): void - установка контактных данных;
- - getProducts(): IProduct[] - возвращает список товаров;
- - getProductById(id: string): IProduct | undefined - возвращает товар по ID;
- - addToBasket(product: IProduct): void - добавляет товар в корзину;
- - removeFromBasket(productId: string): void - удаляет товар из корзины;
+ - getCards(): ICard[] - возвращает список товаров;
+ - getCardById(id: string): ICard | undefined - возвращает товар по ID;
+ - addToBasket(card: ICard): void - добавляет товар в корзину;
+ - removeFromBasket(cardId: string): void - удаляет товар из корзины;
  - getBasketItems(): IBasketItem[] - возвращает содержимое корзины;
  - getTotalPrice(): number - считает итоговую сумму;
  - clearBasket(): void - очищает корзину после оформления.
