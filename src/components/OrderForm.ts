@@ -25,13 +25,13 @@ export class OrderForm extends Component<IFormState> {
     this._errorElement = ensureElement<HTMLElement>('.form__errors', container);
 
     this._initHandlers();
+    this._updateSubmitButton(); 
   }
 
   private _initHandlers() {
     this._onlineButton.addEventListener('click', () => this._selectPayment('online'));
     this._offlineButton.addEventListener('click', () => this._selectPayment('offline'));
     this._addressInput.addEventListener('input', () => this._handleAddressChange());
-
     this.container.addEventListener('submit', (e) => {
       e.preventDefault();
       this.events.emit('order:submit', e);
@@ -40,8 +40,8 @@ export class OrderForm extends Component<IFormState> {
 
   private _selectPayment(method: PaymentMethod) {
     this._payment = method;
+    this._updateSubmitButton()
     this._updatePaymentButtons(method);
-    
     this.events.emit('payment:changed', { method });
   }
 
@@ -52,6 +52,7 @@ export class OrderForm extends Component<IFormState> {
 
   private _handleAddressChange(): void {
     this._address = this._addressInput.value;
+    this._validateForm();
     this.events.emit('address:change', { address: this._address });
   }
 
@@ -77,6 +78,7 @@ get valid(): boolean {
 
 set valid(value: boolean) {
   this._valid = value;
+  this._updateSubmitButton()
 }
 
 set errors(value: string) {
@@ -90,5 +92,15 @@ set errors(value: string) {
     this._payment = null;
     this._address = '';
     this._valid = false;
+    this._updateSubmitButton();
+  }
+
+  private _updateSubmitButton() {
+    this._submitButton.disabled = !this._valid;
+  }
+
+  private _validateForm(): void {
+    this._valid = Boolean(this._payment) && this._address.trim().length > 0;
+    this._updateSubmitButton(); 
   }
 }

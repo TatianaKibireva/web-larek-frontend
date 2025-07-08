@@ -1,12 +1,7 @@
-import { IBasketItem } from "../types";
+import { IBasketItem, IBasketModal } from "../types";
 import { ensureElement } from "../utils/utils";
 import { Component } from "./base/Component";
 import { IEvents } from "./base/events";
-
-interface IBasketModal{
-  items: IBasketItem[]
-  total: number
-}
 
 export class BasketModal extends Component<IBasketModal> {
   protected _list: HTMLElement

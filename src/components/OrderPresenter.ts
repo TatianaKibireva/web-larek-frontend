@@ -35,15 +35,10 @@ export class OrderPresenter {
         // Проверяем корзину через модель
         const items = this.cardModel.getBasketItems();
         if (items.length === 0) {
-          console.warn('Cannot open order - basket is empty');
           return;
         }
-  
-        // Закрываем предыдущее модальное окно
-        this.modal.close();
-  
-        // Сбрасываем и открываем форму
-        this.orderForm.reset();
+        this.modal.close();     // Закрываем предыдущее модальное окно
+        this.orderForm.reset();   // Сбрасываем и открываем форму
         this.modal.content = this.orderForm.render({
           payment: null,
           address: '',
@@ -77,6 +72,12 @@ export class OrderPresenter {
         e.preventDefault();
         events.emit('order:submit');
     });
+
+    this.events.on('order:submit', () => {
+      if (this.orderForm.valid) {
+        this.events.emit('contacts:open');
+      }
+  });
   }
 
   openForm() {
@@ -90,7 +91,7 @@ export class OrderPresenter {
     this.addressInput.value = '';
     this.submitButton.disabled = true;
   }
-
+  
   setValidState(isValid: boolean) {
     this.submitButton.disabled = !isValid;
   }

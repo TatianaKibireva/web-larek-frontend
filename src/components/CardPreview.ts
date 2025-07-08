@@ -85,7 +85,4 @@ export class CardPreview extends Component<ICard> {
     this.inBasket = false;
     return this.container;
   }
-
 }
-
-

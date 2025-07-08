@@ -2,7 +2,6 @@ import { ICard } from "../types";
 import { Api } from "./base/api";
 
 
-
 export class CardApi extends Api {
 
   getProducts(): Promise<ICard[]> {

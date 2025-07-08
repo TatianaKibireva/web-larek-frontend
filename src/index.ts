@@ -11,14 +11,16 @@ import { CardView } from './components/CardView';
 import { ModalPresenter } from './components/ModalPresenter';
 import { BasketPresenter } from './components/BasketPresenter';
 import { OrderPresenter } from './components/OrderPresenter';
+import { ContactsPresenter } from './components/ContactPresenter';
+import { SuccessPresenter } from './components/SuccessPresenter';
 
 class Catalog extends CardModel<ICatalog> implements ICatalog {
   setCards(cards: ICard[] | unknown) {
-    if (!Array.isArray(cards)) { // Проверка на массив
+    if (!Array.isArray(cards)) { // проверка на массив
       this.cards = [];
       return;
     }
-    this.cards = cards.map(card => ({ // Обработка карточек
+    this.cards = cards.map(card => ({ // обработка карточек
       id: card.id,
       title: card.title,
       description: card.description, 
@@ -56,6 +58,8 @@ const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket')
 const orderTemplate = ensureElement<HTMLTemplateElement>('#order')
+const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts'); 
+const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
 // инициализация презентеров
 const catalog = new Catalog({cards: []}, events);
@@ -63,9 +67,11 @@ const catalogView = new CatalogView(CardView, cardCatalogTemplate, events);
   new ModalPresenter(events, cardModel, cardPreviewTemplate);
   new BasketPresenter(events, basketTemplate);
   new OrderPresenter(events, orderTemplate,cardModel)
+  new ContactsPresenter(events, contactsTemplate, cardModel);
+  new SuccessPresenter(events, successTemplate);
 
 // подписываемся на изменения каталога
-events.on<{ cards: ICard[] }>('catalog.cards:changed', (data) => {
+events.on<{cards: ICard[]}>('catalog.cards:changed', (data) => {
   catalogView.cards = data.cards;
 });
 
@@ -81,7 +87,7 @@ events.on('card:add', (event: { card: ICard }) => {
   })
 })
 
-events.on('card:remove', (event: { id: string }) => {
+events.on('card:remove', (event: {id: string}) => {
   cardModel.removeFromBasket(event.id)
 })
 
@@ -103,7 +109,7 @@ api.getProducts()
   }
   )
   .catch(err => {
-    console.error('Error');
+    console.error(err);
     catalog.setCards([]);
     cardModel.setCards([]);
   });
@@ -115,10 +121,10 @@ api.getProducts()
   };
 
 events.on('basket:changed', (data: { items: IBasketItem[], total: number }) => {
-  // Обновляем счетчик товаров
+  // обновляем счетчик товаров
   const totalCount = data.items.reduce((sum, item) => sum + (item.quantity || 0), 0);
   updateBasketCounter(totalCount);
-  // Обновляем сумму в корзине
+  // обновляем сумму в корзине
   const basketTotal = document.querySelector('.basket__price');
   if (basketTotal) {
     basketTotal.textContent = `${data.total} синапсов`;
