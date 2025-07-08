@@ -27,14 +27,12 @@ export class Modal extends Component<IModalData> {
 
     open() {
         this.container.classList.add('modal_active');
-        document.querySelector('.page__wrapper')?.classList.add('page__wrapper_locked');
         this.events.emit('modal:open');
     }
 
     close() {
         this.container.classList.remove('modal_active');
         this.content = null;
-        document.querySelector('.page__wrapper')?.classList.remove('page__wrapper_locked');
         this.events.emit('modal:close');
     }
 

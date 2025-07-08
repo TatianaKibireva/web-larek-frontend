@@ -5,7 +5,6 @@ export interface ICard {
   category: string;
   image: string;
   price: number | null;
-  // text?: string;
   description?: string;
 }
 
@@ -124,4 +123,14 @@ element: HTMLElement
  getElement(): HTMLElement
 }
 
+export type PaymentMethod = 'online' | 'offline'; //  варианты оплаты
 
+export interface IOrderForm {
+    payment: PaymentMethod | null; // null - если не выбрано
+    address: string;
+}
+
+export interface IFormState {
+  valid: boolean;
+  errors: string;
+}

@@ -1,7 +1,9 @@
-import { values } from "lodash";
+
 import { ICard } from "../types";
 import { ensureElement } from "../utils/utils";
 import { Component } from "./base/Component";
+import { CDN_URL } from "../utils/constants";
+import { IEvents } from "./base/events";
 
 export class CardPreview extends Component<ICard> {
   protected _title: HTMLElement;
@@ -10,9 +12,10 @@ export class CardPreview extends Component<ICard> {
   protected _price: HTMLElement;
   protected _text: HTMLElement;
   protected _button: HTMLButtonElement;
+  protected _cardData: ICard | null;
 
 
-  constructor(container: HTMLElement) {
+  constructor(container: HTMLElement, protected events: IEvents) {
     super(container)
 
     this._title = ensureElement<HTMLElement>('.card__title', container)
@@ -21,6 +24,8 @@ export class CardPreview extends Component<ICard> {
     this._price = ensureElement<HTMLElement>('.card__price', container)
     this._text = ensureElement<HTMLElement>('.card__text', container)
     this._button = ensureElement<HTMLButtonElement>('.card__button', container)
+    this._cardData = null;
+
   }
 
   set title(value: string){
@@ -47,8 +52,40 @@ export class CardPreview extends Component<ICard> {
     this.setText(this._button, value)
   }
 
-  getContent(): HTMLElement {
+  get button(): HTMLButtonElement {
+    return this._button;
+  }
+
+  getCardData(): ICard {
+    if (!this._cardData) return null;
+      
+    return {
+        id: this._cardData.id,
+        title: this._title.textContent || '',
+        category: this._category.textContent || '',
+        image: this._image.src.replace(CDN_URL, ''),
+        price: this._price.textContent ? 
+            parseInt(this._price.textContent.replace(' синапсов', '')) : null,
+        description: this._text.textContent || ''
+    };
+  }
+
+  set inBasket(value: boolean) {
+    this.buttonText = value ? 'Удалить из корзины' : 'Добавить в корзину';
+  }
+
+  render(data: ICard): HTMLElement {
+    this._cardData = data; // Сохраняем данные
+    this.title = data.title;
+    this.category = data.category;
+    this.image = `${CDN_URL}${data.image}`;
+    this.price = data.price !== null ? `${data.price} синапсов` : 'Бесценно';
+    this.text = data.description || '';
+    this.buttonText = 'Добавить в корзину';
+    this.inBasket = false;
     return this.container;
-}
+  }
 
 }
+
+

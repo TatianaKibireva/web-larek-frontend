@@ -11,6 +11,7 @@ export class CardView extends Component<ICard> {
   protected _image: HTMLImageElement;
   protected _price: HTMLElement;
   protected _description: string;
+  protected _cardData: ICard;
 
   constructor(protected template: HTMLTemplateElement, protected events: IEvents) {
 
@@ -22,13 +23,9 @@ export class CardView extends Component<ICard> {
     this._price = ensureElement<HTMLElement>('.card__price', this.container);
 
     this.container.addEventListener('click', () => {
-      events.emit('card:select', {
-        title: this._title.textContent,
-        description: this._description,
-        category: this._category.textContent,
-        image: this._image.src.replace(CDN_URL, ''),
-        price: parseInt(this._price.textContent) || null
-      })
+      if (this._cardData) {
+        events.emit('card:select', { ...this._cardData });
+      }
     });
   }
 
@@ -49,7 +46,8 @@ export class CardView extends Component<ICard> {
   }
 
   render(data: ICard): HTMLElement {
-    
+     this._cardData = data;
+
     this.setText(this._title, data.title);
     this.setText(this._category, data.category);
     this.setImage(this._image, `${CDN_URL}${data.image}`, data.title)
@@ -57,8 +55,10 @@ export class CardView extends Component<ICard> {
     this._description = data.description;
     return this.container
   }
+
   protected setImage(element: HTMLImageElement, src: string, alt: string): void {
-    element.src = src
-    element.alt = alt
-  }
+    const imageUrl = src.startsWith('http') ? src : `${CDN_URL}${src}`;
+    element.src = imageUrl;
+    element.alt = alt;
+}
 }

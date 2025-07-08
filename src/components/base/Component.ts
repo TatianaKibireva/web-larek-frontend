@@ -53,6 +53,10 @@ export abstract class Component<T> {
         }
     }
 
+    getContainer(): HTMLElement {
+        return this.container;
+    }
+
     // Вернуть корневой DOM-элемент
     // возвращать будем результат рендера с помощью функции render,
     // которая получает опционально данные и если эти даннеые есть, 

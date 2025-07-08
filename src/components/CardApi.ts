@@ -1,5 +1,4 @@
 import { ICard } from "../types";
-import { API_URL } from "../utils/constants";
 import { Api } from "./base/api";
 
 
