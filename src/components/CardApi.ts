@@ -1,18 +1,16 @@
-import { ICard } from "../types";
-import { Api } from "./base/api";
-
+import { ICard } from '../types';
+import { Api } from './base/api';
 
 export class CardApi extends Api {
+	getProducts(): Promise<ICard[]> {
+		return this.get<{ items: ICard[] }>(`/product`).then((data) => data.items);
+	}
 
-  getProducts(): Promise<ICard[]> {
-    return this.get<{ items: ICard[] }>(`/product`).then(data => data.items)
-  }
+	getProductsItem(id: string): Promise<ICard> {
+		return this.get<ICard>(`/product${id}`);
+	}
 
-  getProductsItem(id: string): Promise<ICard> {
-    return this.get<ICard>(`/product${id}`)
-  }
-
-  postOrderProducts(data: Partial<ICard[]>): Promise<ICard[]>{
-      return this.post<ICard[]>(`/product`, data, 'POST')
-    }
+	postOrderProducts(data: Partial<ICard[]>): Promise<ICard[]> {
+		return this.post<ICard[]>(`/product`, data, 'POST');
+	}
 }
