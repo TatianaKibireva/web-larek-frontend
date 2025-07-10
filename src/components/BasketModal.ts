@@ -1,7 +1,8 @@
 import { IBasketItem, IBasketModal } from '../types';
-import { ensureElement } from '../utils/utils';
+import { cloneTemplate, ensureElement } from '../utils/utils';
 import { Component } from './base/Component';
 import { IEvents } from './base/events';
+import { BasketItemView } from './BasketItemView';
 
 export class BasketModal extends Component<IBasketModal> {
 	protected _list: HTMLElement;
@@ -16,12 +17,7 @@ export class BasketModal extends Component<IBasketModal> {
 
 		this._emptyMessage = document.createElement('li');
 		this._emptyMessage.textContent = 'Корзина пуста';
-		Object.assign(this._emptyMessage.style, {
-			color: 'rgba(255, 255, 255, 1)',
-			fontSize: '30px',
-			listStyleType: 'none',
-			opacity: '0.3',
-		});
+    this._emptyMessage.classList.add('basket-emptyMessage');
 
 		this._list = ensureElement<HTMLElement>('.basket__list', this.container);
 		this._total = ensureElement<HTMLElement>(
@@ -46,33 +42,13 @@ export class BasketModal extends Component<IBasketModal> {
 	}
 
 	private createBasketItem(item: IBasketItem, index: number): HTMLElement {
-		// Создание DOM товара
-		const itemElement = document.createElement('li');
-		itemElement.classList.add('basket__item', 'card', 'card_compact');
-
-		const indexSpan = document.createElement('span');
-		indexSpan.classList.add('basket__item-index');
-		indexSpan.textContent = index.toString();
-
-		const titleSpan = document.createElement('span');
-		titleSpan.classList.add('card__title');
-		titleSpan.textContent = item.title;
-
-		const priceSpan = document.createElement('span');
-		priceSpan.classList.add('card__price');
-		priceSpan.textContent =
-			item.price !== null ? `${item.price} синапсов` : 'Бесценно';
-
-		const deleteButton = document.createElement('button');
-		deleteButton.classList.add('basket__item-delete');
-		deleteButton.addEventListener('click', (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-			this.events.emit('card:remove', { id: item.id });
-		});
-		itemElement.append(indexSpan, titleSpan, priceSpan, deleteButton);
-		return itemElement;
-	}
+    const template = ensureElement<HTMLTemplateElement>('#card-basket');
+    const basketItem = new BasketItemView (cloneTemplate(template), this.events);
+    return basketItem.render({ 
+			  ...item,
+        index: index 
+    });
+}
 
 	private clearList(): void {
 		// Очистка списка товаров

@@ -2,6 +2,7 @@ import { IFormState, PaymentMethod } from '../types';
 import { ensureElement } from '../utils/utils';
 import { Component } from './base/Component';
 import { IEvents } from './base/events';
+import { CardModel } from './CardModel';
 
 export class OrderForm extends Component<IFormState> {
 	protected _onlineButton: HTMLButtonElement;
@@ -13,8 +14,9 @@ export class OrderForm extends Component<IFormState> {
 	protected _payment: PaymentMethod | null = null;
 	protected _address = '';
 	protected _valid = false;
+	
 
-	constructor(container: HTMLFormElement, protected events: IEvents) {
+	constructor(container: HTMLFormElement, protected events: IEvents, protected model: CardModel<any>) {
 		super(container);
 
 		this._onlineButton = ensureElement<HTMLButtonElement>(
@@ -37,6 +39,12 @@ export class OrderForm extends Component<IFormState> {
 
 		this._initHandlers();
 		this._updateSubmitButton();
+	}
+
+	private _validateForm(): void {
+		const result = this.model.validateOrder({payment: this._payment, address: this._address});
+		this.valid = result.valid;
+		this.errors = result.errors;
 	}
 
 	private _initHandlers() {
@@ -122,8 +130,4 @@ export class OrderForm extends Component<IFormState> {
 		this._submitButton.disabled = !this._valid;
 	}
 
-	private _validateForm(): void {
-		this._valid = Boolean(this._payment) && this._address.trim().length > 0;
-		this._updateSubmitButton();
-	}
 }

@@ -15,11 +15,7 @@ export class OrderPresenter {
 	private addressInput: HTMLInputElement;
 	private submitButton: HTMLButtonElement;
 
-	constructor(
-		protected events: IEvents,
-		orderTemplate: HTMLTemplateElement,
-		cardModel: CardModel<any>
-	) {
+	constructor(protected events: IEvents, orderTemplate: HTMLTemplateElement, cardModel: CardModel<any>) {
 		this.formContainer = cloneTemplate(orderTemplate);
 		this.paymentButtons = Array.from(
 			this.formContainer.querySelectorAll('.order__buttons .button')
@@ -35,7 +31,7 @@ export class OrderPresenter {
 
 		this.cardModel = cardModel;
 		this.modal = new Modal(ensureElement('#modal-container'), events); // Инициализация модального окна
-		this.orderForm = new OrderForm(cloneTemplate(orderTemplate), events); // Инициализация формы заказа
+		this.orderForm = new OrderForm(cloneTemplate(orderTemplate), events, cardModel); // Инициализация формы заказа
 
 		this.setupEventListeners(events); // Настройка обработчиков
 	}
@@ -68,17 +64,24 @@ export class OrderPresenter {
 					btn.classList.remove('button_active')
 				);
 				button.classList.add('button_active');
-				events.emit('payment:changed', {
-					payment: button.dataset.payment as 'online' | 'offline',
-				});
+				events.emit('payment:changed', () => {
+					const address = this.addressInput.value;
+					const payment = this.cardModel.payment;
+					const validation = this.cardModel.validateOrder({payment, address});
+					
+					this.orderForm.errors = validation.errors;
+					this.setValidState(validation.valid);
+				 })
 			});
 		});
 
 		// Обработчик ввода адреса
 		this.addressInput.addEventListener('input', () => {
-			events.emit('address:changed', {
-				address: this.addressInput.value,
-			});
+			const address = this.addressInput.value;
+			const payment = this.cardModel.payment;
+			const validation = this.cardModel.validateOrder({payment, address});
+			this.orderForm.errors = validation.errors;
+			this.setValidState(validation.valid);
 		});
 
 		// Обработчик отправки формы

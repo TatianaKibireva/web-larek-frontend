@@ -36,4 +36,11 @@
 			margin-left: 4rem;
 		}
 	}
+
+  &-emptyMessage {
+    color: rgba(255, 255, 255, 1); 
+    font-size: 30px; 
+    list-style-type: none; 
+    opacity: 0.3;
+  }
 }

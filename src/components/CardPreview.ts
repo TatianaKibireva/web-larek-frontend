@@ -12,6 +12,7 @@ export class CardPreview extends Component<ICard> {
 	protected _text: HTMLElement;
 	protected _button: HTMLButtonElement;
 	protected _cardData: ICard | null;
+  protected _id: string;
 
 	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container);
@@ -24,6 +25,14 @@ export class CardPreview extends Component<ICard> {
 		this._button = ensureElement<HTMLButtonElement>('.card__button', container);
 		this._cardData = null;
 	}
+
+  set id(value: string) {
+    this._id = value;
+  }
+
+  get id(): string {
+      return this._id;
+  }
 
 	set title(value: string) {
 		this.setText(this._title, value);
@@ -53,26 +62,12 @@ export class CardPreview extends Component<ICard> {
 		return this._button;
 	}
 
-	getCardData(): ICard {
-		if (!this._cardData) return null;
-
-		return {
-			id: this._cardData.id,
-			title: this._title.textContent || '',
-			category: this._category.textContent || '',
-			image: this._image.src.replace(CDN_URL, ''),
-			price: this._price.textContent
-				? parseInt(this._price.textContent.replace(' синапсов', ''))
-				: null,
-			description: this._text.textContent || '',
-		};
-	}
-
 	set inBasket(value: boolean) {
 		this.buttonText = value ? 'Удалить из корзины' : 'Добавить в корзину';
 	}
 
 	render(data: ICard): HTMLElement {
+    this.id = data.id;
 		this._cardData = data; // Сохраняем данные
 		this.title = data.title;
 		this.category = data.category;

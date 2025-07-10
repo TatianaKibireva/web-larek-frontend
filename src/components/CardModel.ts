@@ -1,4 +1,4 @@
-import { ICard, IBasketItem, IOrder, IOrderForm } from '../types/index';
+import { ICard, IBasketItem, IOrder, IOrderForm, IContactsForm } from '../types/index';
 import { IEvents } from './base/events';
 
 export class CardModel<T> {
@@ -19,9 +19,10 @@ export class CardModel<T> {
 
 	getCardById(id: string): ICard | undefined {
 		//возвращает товар по ID
-		return this.cards.find((cards) => {
-			cards.id === id;
-		});
+		return this.cards.find(card => {
+			const found = card.id === id;
+			return found;
+	});
 	}
 
 	addToBasket(item: IBasketItem): void {
@@ -31,7 +32,6 @@ export class CardModel<T> {
 		} else {
 			this.basket.push({ ...item, quantity: item.quantity || 1 });
 		}
-
 		this.emitChanges('basket:changed', {
 			items: this.basket,
 			total: this.getTotalPrice(),
@@ -103,4 +103,39 @@ export class CardModel<T> {
 		this.order = { ...this.order, ...data };
 		this.emitChanges('order:changed', this.order);
 	}
+
+	validateOrder(data: IOrderForm): { valid: boolean; errors: string } {
+		const errors: string[] = [];
+	
+		if (!data.payment) {
+			errors.push('Необходимо выбрать способ оплаты');
+		}
+	
+		if (!data.address) {
+				errors.push('Необходимо указать адрес');
+		}
+
+		return {
+				valid: errors.length === 0,
+				errors: errors.join(', ')
+		};
+	}
+	validateContacts(data: IContactsForm): { valid: boolean; errors: string } {
+    const errors: string[] = [];
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    const phoneRegex = /^\+?[\d\s\-()]{7,}$/;
+
+    if (!emailRegex.test(data.email)) {
+        errors.push('Необходимо указать кооректный email');
+    }
+
+    if (!phoneRegex.test(data.phone)) {
+        errors.push('Необходимо указать кооректный телефон');
+    }
+
+    return {
+        valid: errors.length === 0,
+        errors: errors.join(', ')
+    };
+}
 }

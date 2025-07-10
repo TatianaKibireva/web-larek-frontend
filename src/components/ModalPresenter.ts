@@ -27,20 +27,29 @@ export class ModalPresenter {
 		events.on('card:select', (card: ICard) => this.showCardDetails(card));
 
 		events.on('basket:changed', () => {
-			if (this.cardPreview.getCardData()) {
-				this.updateButtonState(this.cardPreview.getCardData().id);
-			}
+			if (this.cardPreview.id) { // проверяем наличие id
+        this.updateButtonState(this.cardPreview.id); // используем id из презентера
+    }
 		});
 
 		// обработчик клика по кнопке Добавить в корзину
 		this.cardPreview.button.addEventListener('click', () => {
-			const card = this.cardPreview.getCardData();
-			if (card) {
-				if (this.cardModel.isInBasket(card.id)) {
-					events.emit('card:remove', { id: card.id });
-				} else {
-					events.emit('card:add', { card });
-				}
+			const cardId = this.cardPreview.id;
+			if (this.cardModel.isInBasket(cardId)) {
+					events.emit('card:remove', {id: cardId});
+			} else {
+					const cardData = this.cardModel.getCardById(cardId);
+					if (cardData) {
+							events.emit('card:add', { 
+									card: {
+											id: cardData.id,
+											title: cardData.title,
+											price: cardData.price,
+											category: cardData.category,
+											image: cardData.image
+									} 
+							});
+					}
 			}
 		});
 	}

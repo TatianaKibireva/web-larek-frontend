@@ -1,3 +1,6 @@
+import { Component } from "../components/base/Component";
+import { IEvents } from "../components/base/events";
+
 // Данные товара
 export interface ICard {
 	id: string;
@@ -28,8 +31,8 @@ export interface IOrder {
 export interface IContactsForm {
 	email: string;
 	phone: string;
-	valid: boolean;
-	errors: string;
+	valid?: boolean;
+	errors?: string;
 }
 
 export interface IBasketModal {
@@ -47,4 +50,12 @@ export interface IOrderForm {
 export interface IFormState {
 	valid: boolean;
 	errors: string;
+}
+
+export interface ICardConstructor {
+	new (template: HTMLTemplateElement, events: IEvents): Component<ICard>;
+}
+
+export interface IHeaderBasket {
+  counter: number;
 }
